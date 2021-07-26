@@ -28,4 +28,8 @@ chain:
 	cat client/client.pem intermediate/certs/intermediate.cacert.pem certs/cacert.pem > full_chain.pem
 	cat intermediate/certs/intermediate.cacert.pem certs/cacert.pem > half_chain.pem
 
+verify: full_chain.pem half_chain.pem
+	openssl verify -CAfile half_chain.pem client/client.pem
+	openssl verify -CAfile certs/cacert.pem intermediate/certs/intermediate.cacert.pem
+
 all: root intermediate client chain
