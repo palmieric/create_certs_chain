@@ -27,4 +27,4 @@ chain:
 	cat client/client.pem intermediate/certs/intermediate.cacert.pem private/cakey.pem > full_chain.pem
 	cat intermediate/certs/intermediate.cacert.pem private/cakey.pem > half_chain.pem
 
-all: root intermediate client
+all: root intermediate client chain
