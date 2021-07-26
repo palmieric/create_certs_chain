@@ -23,4 +23,8 @@ client: intermediate/certs/intermediate.cacert.pem
 	openssl req -new -subj '/CN=test' -key client/client.key -out client/client.req
 	openssl x509 -req -in client/client.req -CA intermediate/certs/intermediate.cacert.pem -CAkey intermediate/private/intermediate.cakey.pem -CAcreateserial -out client/client.pem -days 500 -sha256 -passin file:./mypass.enc
 
+chain:
+	cat client/client.pem intermediate/certs/intermediate.cacert.pem private/cakey.pem > full_chain.pem
+	cat intermediate/certs/intermediate.cacert.pem private/cakey.pem > half_chain.pem
+
 all: root intermediate client
