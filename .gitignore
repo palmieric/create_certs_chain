@@ -2,6 +2,12 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pem
+*.attr
+*.old
+*.key
+*.req
+*.srl
 
 # C extensions
 *.so
