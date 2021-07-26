@@ -1,5 +1,6 @@
 clean:
-	rm -f client.*
+	rm -f client/client.*
+	rm -f *_chain.pem
 	rm -f certs/*.pem
 	rm -f private/cakey.pem
 	rm -f intermediate/certs/*.{pem,srl}
