@@ -3,8 +3,7 @@ clean:
 	rm -f *_chain.pem
 	rm -f certs/*.pem
 	rm -f private/cakey.pem
-	rm -f intermediate/certs/*.{pem,srl}
-	rm -f intermediate/{csr,private}/*.pem
+	rm -f {intermediate,server}/{certs,csr,private}/*.{pem,srl,key}
 	rm -f index.*
 	touch index.txt
 	echo '01' > serial
@@ -19,6 +18,11 @@ intermediate: certs/cacert.pem
 	openssl req -new -sha256 -config intermediate/openssl.cnf -passin file:mypass.enc  -key intermediate/private/intermediate.cakey.pem -out intermediate/csr/intermediate.csr.pem
 	openssl ca -config openssl.cnf -extensions v3_intermediate_ca -days 3650 -notext -batch -passin file:mypass.enc -in intermediate/csr/intermediate.csr.pem -out intermediate/certs/intermediate.cacert.pem
 
+server: certs/cacert.pem
+	openssl genrsa -des3 -passout file:mypass.enc -out server/private/server.key 4096
+	openssl req -new -sha256 -config intermediate/openssl.cnf -passin file:mypass.enc  -key server/private/server.key -out server/csr/server.csr.pem
+	openssl ca -config openssl.cnf -days 3650 -notext -batch -passin file:mypass.enc -in server/csr/server.csr.pem -out server/certs/server.cert.pem
+
 client: intermediate/certs/intermediate.cacert.pem
 	openssl genrsa -out client/client.key 4096
 	openssl req -new -subj '/CN=test' -key client/client.key -out client/client.req
@@ -30,6 +34,7 @@ chain: client/client.pem intermediate/certs/intermediate.cacert.pem certs/cacert
 
 verify: full_chain.pem half_chain.pem
 	openssl verify -CAfile half_chain.pem client/client.pem
+	openssl verify -CAfile half_chain.pem server/certs/server.cert.pem
 	openssl verify -CAfile certs/cacert.pem intermediate/certs/intermediate.cacert.pem
 
-all: root intermediate client chain
+all: root intermediate server client chain
