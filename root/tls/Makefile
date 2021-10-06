@@ -5,6 +5,8 @@ clean:
 	rm -f private/cakey.pem
 	rm -f {intermediate,server}/{certs,csr,private}/*.{pem,srl,key}
 	rm -f index.*
+	rm -f mypass.enc
+	rm -Rf nginx_certs/
 	touch index.txt
 	echo '01' > serial
 
@@ -44,4 +46,12 @@ verify: client/client.pem intermediate/certs/intermediate.cacert.pem certs/cacer
 	openssl verify -CAfile half_chain.pem server/certs/server.cert.pem
 	openssl verify -CAfile certs/cacert.pem intermediate/certs/intermediate.cacert.pem
 
-all: root intermediate server client chain
+nginx-certs: 
+	mkdir nginx_certs
+	cp full_chain.pem nginx_certs
+	cp certs/cacert.pem nginx_certs
+	cp client/client.key nginx_certs
+	cp server/certs/server.cert.pem nginx_certs
+	cp server/private/server.key nginx_certs
+
+all: root intermediate server client chain nginx-certs
